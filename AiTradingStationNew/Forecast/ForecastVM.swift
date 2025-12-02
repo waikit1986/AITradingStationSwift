@@ -33,6 +33,7 @@ final class ForecastVM {
     ]
     
     private let baseURL = URL(string: "https://aitradingstation.com")!
+//    private let baseURL = URL(string: "https://264dbed18e8c.ngrok-free.app")!
     
     func fetch10minChart() async {
         errorMessageChart = nil
