@@ -9,12 +9,13 @@ import SwiftUI
 
 struct ForecastDailyView: View {
     let fcVM: ForecastVM
+    let homeVM: HomeVM
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             ChartDailyView(fcVM: fcVM)
 
-            ForecastDetailView(fcVM: fcVM)
+            ForecastDetailView(fcVM: fcVM, homeVM: homeVM)
                 .onAppear {
                     fcVM.forecastSession = "morning"
                 }
@@ -23,5 +24,5 @@ struct ForecastDailyView: View {
 }
 
 #Preview {
-    ForecastDailyView(fcVM: ForecastVM())
+    ForecastDailyView(fcVM: ForecastVM(), homeVM: HomeVM())
 }

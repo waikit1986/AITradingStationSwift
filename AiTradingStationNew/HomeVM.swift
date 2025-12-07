@@ -12,9 +12,9 @@ import SwiftUI
 @Observable
 class HomeVM {
     var selection: Int = 0
-    var isShowPaywall = false
     var isShowingAiTerms: Bool {
         get { UserDefaults.standard.bool(forKey: "isShowingAiTerms") }
         set { UserDefaults.standard.set(newValue, forKey: "isShowingAiTerms") }
     }
+    var hasPremiumAccess: Bool = false
 }

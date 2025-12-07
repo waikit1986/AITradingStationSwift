@@ -6,26 +6,46 @@
 //
 
 import SwiftUI
+import RevenueCat
+import RevenueCatUI
 
 struct MainView: View {
     @State private var homeVM = HomeVM()
     @State private var fcVM = ForecastVM()
     @State private var reviewVM = ReviewVM()
     
+    init() {
+        Purchases.logLevel = .debug
+        Purchases.configure(withAPIKey: "appl_MyODCWbHNtKLbXyzEyacImWUYUX", appUserID: nil)
+    }
+    
     var body: some View {
         VStack {
-            ForecastView(fcVM: fcVM)
+            ForecastView(fcVM: fcVM, homeVM: homeVM)
         }
         .fontDesign(.rounded)
         .preferredColorScheme(.dark)
-        .onAppear {
+        .task {
             reviewVM.triggerReviewAfterDelay()
-        }
-        .sheet(isPresented: $homeVM.isShowingAiTerms) {
-            TermsView(homeVM: homeVM)
-                .interactiveDismissDisabled(true)
+            
+            if let customerInfo = try? await Purchases.shared.customerInfo() {
+                let entitlementActive = customerInfo.entitlements[Constants.ENTITLEMENT_ID]?.isActive == true
+                homeVM.hasPremiumAccess = entitlementActive
+            }
+            
+            for await customerInfo in Purchases.shared.customerInfoStream {
+                let entitlementActive = customerInfo.entitlements[Constants.ENTITLEMENT_ID]?.isActive == true
+                await MainActor.run {
+                    homeVM.hasPremiumAccess = entitlementActive
+                }
+            }
         }
     }
+}
+
+
+struct Constants {
+    static let ENTITLEMENT_ID = "Monthly AI Forecast Access"
 }
 
 #Preview {

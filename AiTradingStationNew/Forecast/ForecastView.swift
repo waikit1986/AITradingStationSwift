@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ForecastView: View {
     let fcVM: ForecastVM
+    let homeVM: HomeVM
     
     var body: some View {
         ZStack {
@@ -17,14 +18,14 @@ struct ForecastView: View {
                     .padding()
                 
                 TabView {
-                    ForecastHourlyView(fcVM: fcVM)
+                    ForecastHourlyView(fcVM: fcVM, homeVM: homeVM)
                         .padding()
                         .tabItem {
                             Text("Hourly")
                         }
                         .tag(0)
                     
-                    ForecastDailyView(fcVM: fcVM)
+                    ForecastDailyView(fcVM: fcVM, homeVM: homeVM)
                         .padding()
                         .tabItem {
                             Text("Daily")
@@ -47,11 +48,14 @@ struct ForecastView: View {
                         .foregroundStyle(.blue)
                         .onTapGesture {
                             Task {
+                                await fcVM.fetchLatestHeaderPrice()
+                                
                                 if fcVM.forecastSession == "hourly" {
-                                    await fcVM.fetch10minChart()
+                                    await fcVM.fetch15minChart()
                                 } else {
                                     await fcVM.fetchDailyChart()
                                 }
+                                
                                 await fcVM.fetchForecast()
                             }
                         }
@@ -63,7 +67,7 @@ struct ForecastView: View {
 }
 
 #Preview {
-    ForecastView(fcVM: ForecastVM())
+    ForecastView(fcVM: ForecastVM(), homeVM: HomeVM())
         .preferredColorScheme(.dark)
 }
 

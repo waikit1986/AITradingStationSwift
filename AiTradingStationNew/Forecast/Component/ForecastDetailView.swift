@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
+import RevenueCatUI
 
 struct ForecastDetailView: View {
     let fcVM: ForecastVM
+    let homeVM: HomeVM
+    
+    @State private var isShowingPaywall = false
     
     var body: some View {
         ScrollView {
@@ -87,9 +91,9 @@ struct ForecastDetailView: View {
                                         .font(.caption)
                                         .foregroundColor(Color.gray.opacity(0.6))
                                     Text("\(f.confidence_score, specifier: "%.1f")%")
-                                            .font(.body)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.white)
+                                        .font(.body)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 
@@ -256,6 +260,42 @@ struct ForecastDetailView: View {
         .task(id: fcVM.symbol) {
             await fcVM.fetchForecast()
         }
+        .blur(radius: homeVM.hasPremiumAccess ? 0 : 10)
+        .overlay {
+            if !homeVM.hasPremiumAccess {
+                VStack {
+                    Image(systemName: "lock.fill")
+                        .font(.largeTitle)
+                        .foregroundColor(.white)
+                        .padding(.top, 80)
+                    Text("Premium only access")
+                        .foregroundColor(.white)
+                    
+                    Text("Subscribe")
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 24)
+                        .background(Color.blue)
+                        .cornerRadius(12)
+                    
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.black.opacity(0.4))
+                .onTapGesture {
+                    isShowingPaywall = true
+                }
+            }
+        }
+        .sheet(isPresented: self.$isShowingPaywall) {
+            PaywallView()
+        }
+        .onChange(of: homeVM.hasPremiumAccess) { oldValue, newValue in
+            if newValue {
+                isShowingPaywall = false
+            }
+        }
     }
     
     private func formatDate(_ date: Date) -> String {
@@ -281,7 +321,6 @@ struct ForecastDetailView: View {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        ForecastDetailView(fcVM: ForecastVM())
+        ForecastDetailView(fcVM: ForecastVM(), homeVM: HomeVM())
     }
 }
-

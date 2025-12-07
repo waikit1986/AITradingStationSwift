@@ -9,12 +9,13 @@ import SwiftUI
 
 struct ForecastHourlyView: View {
     let fcVM: ForecastVM
+    let homeVM: HomeVM
     
     var body: some View {
         ScrollView(showsIndicators: false) {
-            Chart10MinView(fcVM: fcVM)
+            Chart1HView(fcVM: fcVM)
 
-            ForecastDetailView(fcVM: fcVM)
+            ForecastDetailView(fcVM: fcVM, homeVM: homeVM)
                 .onAppear {
                     fcVM.forecastSession = "hourly"
                 }
@@ -23,5 +24,5 @@ struct ForecastHourlyView: View {
 }
 
 #Preview {
-    ForecastHourlyView(fcVM: ForecastVM())
+    ForecastHourlyView(fcVM: ForecastVM(), homeVM: HomeVM())
 }

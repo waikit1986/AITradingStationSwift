@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5841D7A12EE56534007E3BC8 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 5841D7A02EE56534007E3BC8 /* RevenueCat */; };
+		5841D7A32EE56534007E3BC8 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5841D7A22EE56534007E3BC8 /* RevenueCatUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		581A8AA52ED299E500DE7973 /* AiTradingStationNew.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AiTradingStationNew.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5841D7A32EE56534007E3BC8 /* RevenueCatUI in Frameworks */,
+				5841D7A12EE56534007E3BC8 /* RevenueCat in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +72,8 @@
 			);
 			name = AiTradingStationNew;
 			packageProductDependencies = (
+				5841D7A02EE56534007E3BC8 /* RevenueCat */,
+				5841D7A22EE56534007E3BC8 /* RevenueCatUI */,
 			);
 			productName = AiTradingStationNew;
 			productReference = 581A8AA52ED299E500DE7973 /* AiTradingStationNew.app */;
@@ -94,6 +103,9 @@
 			);
 			mainGroup = 581A8A9C2ED299E500DE7973;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5841D79F2EE56534007E3BC8 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 581A8AA62ED299E500DE7973 /* Products */;
 			projectDirPath = "";
@@ -267,7 +279,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.6;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lowwaikit.aitradingstation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -305,7 +317,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.6;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lowwaikit.aitradingstation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -344,6 +356,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5841D79F2EE56534007E3BC8 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.49.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5841D7A02EE56534007E3BC8 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5841D79F2EE56534007E3BC8 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat;
+		};
+		5841D7A22EE56534007E3BC8 /* RevenueCatUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5841D79F2EE56534007E3BC8 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCatUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 581A8A9D2ED299E500DE7973 /* Project object */;
 }

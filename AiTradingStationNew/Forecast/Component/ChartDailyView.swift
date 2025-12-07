@@ -132,7 +132,7 @@ struct ChartDailyView: View {
         .task(id: fcVM.symbol) {
             fcVM.forecastSession = "morning"
             await fcVM.fetchDailyChart()
-            await fcVM.fetch10minChart()
+            await fcVM.fetch15minChart()
         }
     }
 

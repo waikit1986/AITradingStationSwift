@@ -13,11 +13,14 @@ import Observation
 final class ForecastVM {
     var isLoadingChart: Bool = false
     var isLoadingForecast: Bool = false
+    var errorMessageHeader: String?
     var errorMessageChart: String?
     var errorMessageForecast: String?
     var symbol: String? = "spy"
     var forecastSession: String? = "hourly"
-    var chart10MinData: [MsDataApi] = []
+    var headerLatestPrice: [MsDataApi] = []
+    var chart15MinData: [MsDataApi] = []
+    var chart1HData: [MsDataApi] = []
     var chartDailyData: [MsDataApi] = []
     var forecast: FcDb?
     
@@ -35,14 +38,11 @@ final class ForecastVM {
     private let baseURL = URL(string: "https://aitradingstation.com")!
 //    private let baseURL = URL(string: "https://264dbed18e8c.ngrok-free.app")!
     
-    func fetch10minChart() async {
-        errorMessageChart = nil
-        isLoadingChart = true
-        defer { isLoadingChart = false }
-        
+    func fetchLatestHeaderPrice() async {
+        errorMessageHeader = nil
         do {
             var components = URLComponents(
-                url: baseURL.appendingPathComponent("/api/ms/10min/chart"),
+                url: baseURL.appendingPathComponent("/api/ms/15min"),
                 resolvingAgainstBaseURL: false
             )!
             
@@ -63,7 +63,77 @@ final class ForecastVM {
             
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
-            chart10MinData = try decoder.decode([MsDataApi].self, from: data)
+            headerLatestPrice = try decoder.decode([MsDataApi].self, from: data)
+            
+        } catch {
+            errorMessageHeader = error.localizedDescription
+        }
+    }
+    
+    func fetch15minChart() async {
+        errorMessageChart = nil
+        isLoadingChart = true
+        defer { isLoadingChart = false }
+        
+        do {
+            var components = URLComponents(
+                url: baseURL.appendingPathComponent("/api/ms/15min/chart"),
+                resolvingAgainstBaseURL: false
+            )!
+            
+            components.queryItems = [
+                URLQueryItem(name: "symbol", value: symbol)
+            ]
+            
+            guard let url = components.url else { return }
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let http = response as? HTTPURLResponse,
+                  (200...299).contains(http.statusCode)
+            else { throw URLError(.badServerResponse) }
+            
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            chart15MinData = try decoder.decode([MsDataApi].self, from: data)
+            
+        } catch {
+            errorMessageChart = error.localizedDescription
+        }
+    }
+    
+    func fetch1hChart() async {
+        errorMessageChart = nil
+        isLoadingChart = true
+        defer { isLoadingChart = false }
+        
+        do {
+            var components = URLComponents(
+                url: baseURL.appendingPathComponent("/api/ms/1h/chart"),
+                resolvingAgainstBaseURL: false
+            )!
+            
+            components.queryItems = [
+                URLQueryItem(name: "symbol", value: symbol)
+            ]
+            
+            guard let url = components.url else { return }
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let http = response as? HTTPURLResponse,
+                  (200...299).contains(http.statusCode)
+            else { throw URLError(.badServerResponse) }
+            
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            chart1HData = try decoder.decode([MsDataApi].self, from: data)
             
         } catch {
             errorMessageChart = error.localizedDescription

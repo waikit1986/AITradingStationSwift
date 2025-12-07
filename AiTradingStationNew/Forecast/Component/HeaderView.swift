@@ -29,7 +29,7 @@ struct HeaderView: View {
                 }
             } label: {
                 HStack(spacing: 6) {
-                    Text((fcVM.forecastSession == "hourly" ? fcVM.chart10MinData.last?.symbol : fcVM.chartDailyData.last?.symbol) ?? "--")
+                    Text((fcVM.forecastSession == "hourly" ? fcVM.headerLatestPrice.last?.symbol : fcVM.chartDailyData.last?.symbol) ?? "--")
                     .font(.title)
                     .fontWeight(.bold)
 
@@ -41,17 +41,59 @@ struct HeaderView: View {
                 .padding(.vertical, 8)
             }
             
-            Text(String(format: "%.2f", fcVM.chart10MinData.last?.close ?? 0))
+            VStack {
+                Text(fcVM.headerLatestPrice.last?.symbol_name ?? "--")
+                    .font(.title3)
+                    .fontWeight(.thin)
+                    .padding(.bottom)
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
+            
+            Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.close ?? 0))
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            Text("last updated: \(fcVM.chart10MinData.last?.timestamp != nil ? Self.timeFormatter.string(from: fcVM.chart10MinData.last!.timestamp) : "--")")
+            HStack(spacing: 20) {
+                VStack(alignment: .leading) {
+                    Text("Open")
+                        .font(.caption2)
+                        .foregroundStyle(Color.gray)
+                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.open ?? 0))
+                        .font(.caption)
+                        .foregroundStyle(Color.white)
+                }
+                
+                VStack(alignment: .leading) {
+                    Text("High")
+                        .font(.caption2)
+                        .foregroundStyle(Color.gray)
+                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.high ?? 0))
+                        .font(.caption)
+                        .foregroundStyle(Color.green)
+                }
+                
+                VStack(alignment: .leading) {
+                    Text("Low")
+                        .font(.caption2)
+                        .foregroundStyle(Color.gray)
+                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.low ?? 0))
+                        .font(.caption)
+                        .foregroundStyle(Color.red)
+                }
+            }
+
+            
+            Text("last updated: \(fcVM.headerLatestPrice.last?.timestamp != nil ? Self.timeFormatter.string(from: fcVM.headerLatestPrice.last!.timestamp) : "--")")
                 .font(.caption2)
                 .fontWeight(.thin)
-            
-            Text(fcVM.chart10MinData.last?.symbol_name ?? "--")
-                .font(.title3)
-                .fontWeight(.thin)
+        }
+        .onAppear {
+            Task {
+                await fcVM.fetchLatestHeaderPrice()
+            }
+        }
+        .task(id: fcVM.symbol) {
+            await fcVM.fetchLatestHeaderPrice()
         }
     }
 }
