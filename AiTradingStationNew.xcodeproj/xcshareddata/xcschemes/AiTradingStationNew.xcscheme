@@ -55,7 +55,7 @@
          referenceType = "1">
       </LocationScenarioReference>
       <StoreKitConfigurationFileReference
-         identifier = "../../AiTradingStationNew/Review/AI Stock Trading: Chart.storekit">
+         identifier = "../../AiTradingStationNew/AI Stock Trading: Chart.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
