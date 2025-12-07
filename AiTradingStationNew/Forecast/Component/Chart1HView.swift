@@ -8,7 +8,7 @@
 import SwiftUI
 import Charts
 
-struct Chart10MinView: View {
+struct Chart1HView: View {
 
     let fcVM: ForecastVM
 
@@ -32,10 +32,10 @@ struct Chart10MinView: View {
                 Text("Error: \(error)")
                     .foregroundColor(.purple)
                     .padding()
-            } else if !fcVM.chart10MinData.isEmpty {
+            } else if !fcVM.chart1HData.isEmpty {
                 HStack {
                     Spacer()
-                    Text("10min chart")
+                    Text("1H chart")
                         .fontWeight(.bold)
                     Spacer()
                 }
@@ -46,7 +46,7 @@ struct Chart10MinView: View {
                             // Chart
                             Chart {
                                 // Area under line
-                                ForEach(fcVM.chart10MinData) { point in
+                                ForEach(fcVM.chart1HData) { point in
                                     AreaMark(
                                         x: .value("Time", point.timestamp),
                                         yStart: .value("Baseline", yAxisDomain().lowerBound),
@@ -67,7 +67,7 @@ struct Chart10MinView: View {
                                 }
 
                                 // Main line
-                                ForEach(fcVM.chart10MinData) { point in
+                                ForEach(fcVM.chart1HData) { point in
                                     LineMark(
                                         x: .value("Time", point.timestamp),
                                         y: .value("Close", point.close)
@@ -84,7 +84,7 @@ struct Chart10MinView: View {
                                 }
 
                                 // Points with annotation
-                                ForEach(fcVM.chart10MinData) { point in
+                                ForEach(fcVM.chart1HData) { point in
                                     PointMark(
                                         x: .value("Time", point.timestamp),
                                         y: .value("Close", point.close)
@@ -99,14 +99,14 @@ struct Chart10MinView: View {
                                     }
                                 }
                             }
-                            .frame(width: CGFloat(fcVM.chart10MinData.count) * pointSpacing + 50, height: visibleHeight)
+                            .frame(width: CGFloat(fcVM.chart1HData.count) * pointSpacing + 50, height: visibleHeight)
                             .chartYScale(domain: yAxisDomain())
                             .chartYAxis(.hidden)
                             .chartXAxis(.hidden)
                             
                             // Custom timestamp labels below
                             HStack(spacing: 0) {
-                                ForEach(fcVM.chart10MinData) { point in
+                                ForEach(fcVM.chart1HData) { point in
                                     Text(Self.timeFormatter.string(from: point.timestamp))
                                         .font(.caption2)
                                         .foregroundColor(.white.opacity(0.7))
@@ -132,19 +132,19 @@ struct Chart10MinView: View {
         .padding(.vertical)
         .task(id: fcVM.symbol) {
             fcVM.forecastSession = "hourly"
-            await fcVM.fetch10minChart()
+            await fcVM.fetch1hChart()
         }
     }
 
     private func yAxisDomain() -> ClosedRange<Double> {
-        guard !fcVM.chart10MinData.isEmpty else { return 0...1 }
-        let minY = fcVM.chart10MinData.map { $0.close }.min() ?? 0
-        let maxY = fcVM.chart10MinData.map { $0.close }.max() ?? 1
+        guard !fcVM.chart1HData.isEmpty else { return 0...1 }
+        let minY = fcVM.chart1HData.map { $0.close }.min() ?? 0
+        let maxY = fcVM.chart1HData.map { $0.close }.max() ?? 1
         let padding = (maxY - minY) * 0.1
         return (minY - padding)...(maxY + padding)
     }
 }
 
 #Preview {
-    Chart10MinView(fcVM: ForecastVM())
+    Chart1HView(fcVM: ForecastVM())
 }
