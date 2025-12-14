@@ -18,17 +18,17 @@ struct ForecastView: View {
                     .padding()
                 
                 TabView {
-                    ForecastHourlyView(fcVM: fcVM, homeVM: homeVM)
-                        .padding()
-                        .tabItem {
-                            Text("Hourly")
-                        }
-                        .tag(0)
-                    
                     ForecastDailyView(fcVM: fcVM, homeVM: homeVM)
                         .padding()
                         .tabItem {
-                            Text("Daily")
+                            Text("Daily\n Forecast")
+                        }
+                        .tag(0)
+                    
+                    ForecastHourlyView(fcVM: fcVM, homeVM: homeVM)
+                        .padding()
+                        .tabItem {
+                            Text("Hourly\n Forecast")
                         }
                         .tag(1)
                 }
@@ -49,12 +49,13 @@ struct ForecastView: View {
                         .onTapGesture {
                             Task {
                                 await fcVM.fetchLatestHeaderPrice()
-                                
-                                if fcVM.forecastSession == "hourly" {
-                                    await fcVM.fetch15minChart()
-                                } else {
-                                    await fcVM.fetchDailyChart()
-                                }
+                                await fcVM.fetchDailyChart()
+                                await fcVM.fetch15minChart()
+//                                if fcVM.forecastSession == "hourly" {
+//                                    await fcVM.fetch15minChart()
+//                                } else {
+//                                    await fcVM.fetchDailyChart()
+//                                }
                                 
                                 await fcVM.fetchForecast()
                             }

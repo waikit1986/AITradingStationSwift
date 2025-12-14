@@ -13,7 +13,7 @@ struct ForecastHourlyView: View {
     
     var body: some View {
         ScrollView(showsIndicators: false) {
-            Chart1HView(fcVM: fcVM)
+            Chart15MinView(fcVM: fcVM)
 
             ForecastDetailView(fcVM: fcVM, homeVM: homeVM)
                 .onAppear {

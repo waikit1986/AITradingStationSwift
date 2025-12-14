@@ -19,7 +19,7 @@ struct ChartDailyView: View {
     }()
 
     // Visible chart size
-    private let visibleHeight: CGFloat = 350
+    private let visibleHeight: CGFloat = 300
     private let pointSpacing: CGFloat = 50
 
     var body: some View {
@@ -81,6 +81,12 @@ struct ChartDailyView: View {
                                         )
                                     )
                                 }
+                                
+                                if let lastClose = fcVM.chartDailyData.last?.close {
+                                    RuleMark(y: .value("Last Price", lastClose))
+                                        .foregroundStyle(.red)
+                                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4]))
+                                }
 
                                 // Points with annotation
                                 ForEach(fcVM.chartDailyData) { point in
@@ -131,8 +137,8 @@ struct ChartDailyView: View {
         .padding(.vertical)
         .task(id: fcVM.symbol) {
             fcVM.forecastSession = "morning"
-            await fcVM.fetchDailyChart()
-            await fcVM.fetch15minChart()
+//            await fcVM.fetchDailyChart()
+//            await fcVM.fetch15minChart()
         }
     }
 

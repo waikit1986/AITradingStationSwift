@@ -49,51 +49,63 @@ struct HeaderView: View {
             }
             .frame(maxWidth: .infinity, alignment: .center)
             
-            Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.close ?? 0))
+            Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.marketstack_last ?? 0))
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            HStack(spacing: 20) {
-                VStack(alignment: .leading) {
-                    Text("Open")
-                        .font(.caption2)
-                        .foregroundStyle(Color.gray)
-                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.open ?? 0))
-                        .font(.caption)
-                        .foregroundStyle(Color.white)
-                }
-                
-                VStack(alignment: .leading) {
-                    Text("High")
-                        .font(.caption2)
-                        .foregroundStyle(Color.gray)
-                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.high ?? 0))
-                        .font(.caption)
-                        .foregroundStyle(Color.green)
-                }
-                
-                VStack(alignment: .leading) {
-                    Text("Low")
-                        .font(.caption2)
-                        .foregroundStyle(Color.gray)
-                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.low ?? 0))
-                        .font(.caption)
-                        .foregroundStyle(Color.red)
-                }
-            }
+//            HStack(spacing: 20) {
+//                VStack(alignment: .leading) {
+//                    Text("Prev Open")
+//                        .font(.caption2)
+//                        .foregroundStyle(Color.gray)
+//                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.open ?? 0))
+//                        .font(.caption)
+//                        .foregroundStyle(Color.white)
+//                }
+//                
+//                VStack(alignment: .leading) {
+//                    Text("Prev High")
+//                        .font(.caption2)
+//                        .foregroundStyle(Color.gray)
+//                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.high ?? 0))
+//                        .font(.caption)
+//                        .foregroundStyle(Color.green)
+//                }
+//                
+//                VStack(alignment: .leading) {
+//                    Text("Prev Low")
+//                        .font(.caption2)
+//                        .foregroundStyle(Color.gray)
+//                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.low ?? 0))
+//                        .font(.caption)
+//                        .foregroundStyle(Color.red)
+//                }
+//                
+//                VStack(alignment: .leading) {
+//                    Text("Prev Close")
+//                        .font(.caption2)
+//                        .foregroundStyle(Color.gray)
+//                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.low ?? 0))
+//                        .font(.caption)
+//                        .foregroundStyle(Color.blue)
+//                }
+//            }
 
-            
-            Text("last updated: \(fcVM.headerLatestPrice.last?.timestamp != nil ? Self.timeFormatter.string(from: fcVM.headerLatestPrice.last!.timestamp) : "--")")
+            Text("last updated derived data: \(fcVM.headerLatestPrice.last?.timestamp != nil ? Self.timeFormatter.string(from: fcVM.headerLatestPrice.last!.timestamp) : "--")")
                 .font(.caption2)
                 .fontWeight(.thin)
         }
         .onAppear {
             Task {
                 await fcVM.fetchLatestHeaderPrice()
+                await fcVM.fetchDailyChart()
+                await fcVM.fetch15minChart()
             }
         }
         .task(id: fcVM.symbol) {
             await fcVM.fetchLatestHeaderPrice()
+            await fcVM.fetchDailyChart()
+            await fcVM.fetch15minChart()
         }
     }
 }

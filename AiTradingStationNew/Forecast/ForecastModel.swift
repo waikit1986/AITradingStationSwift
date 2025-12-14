@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MsDataApi: Codable, Identifiable {
+struct MsDataApi: Codable, Identifiable, Equatable {
     var id: String { "\(symbol)-\(timestamp.timeIntervalSince1970)" }
 
     let open: Double
@@ -18,6 +18,8 @@ struct MsDataApi: Codable, Identifiable {
     let symbol: String
     let symbol_name: String
     let timestamp: Date
+    let mid: Double?
+    let marketstack_last: Double?
 }
 
 struct FcDb: Codable, Identifiable {
@@ -42,4 +44,3 @@ struct FcDb: Codable, Identifiable {
     let confirmation_trigger: String
     let invalidation_level: Double
 }
-
