@@ -14,6 +14,8 @@ struct ForecastDetailView: View {
     
     @State private var isShowingPaywall = false
     
+    private let nyTimeZone = TimeZone(identifier: "America/New_York")!
+    
     var body: some View {
         ScrollView {
             if fcVM.isLoadingForecast {
@@ -36,7 +38,7 @@ struct ForecastDetailView: View {
                                         .fontWeight(.semibold)
                                         .foregroundColor(.blue)
                                     
-                                    Text("*update on every 1 hour")
+                                    Text("*update on every 1 hour during ny trading hours only\n*displayed time zone is NYT")
                                         .font(.caption2)
                                         .foregroundStyle(.secondary)
                                         .padding(.vertical)
@@ -49,7 +51,7 @@ struct ForecastDetailView: View {
                                         .font(.title2)
                                         .fontWeight(.semibold)
                                         .foregroundColor(.white)
-                                    Text("*update on every day at 8:05am")
+                                    Text("*update on every day at 8:05am NYT")
                                         .font(.caption2)
                                         .foregroundStyle(.secondary)
                                         .padding(.vertical)
@@ -300,6 +302,7 @@ struct ForecastDetailView: View {
     
     private func formatDate(_ date: Date) -> String {
         let f = DateFormatter()
+        f.timeZone = nyTimeZone
         f.dateStyle = .medium
         f.timeStyle = .short
         return f.string(from: date)
@@ -307,12 +310,14 @@ struct ForecastDetailView: View {
     
     private func formatHour(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "h:00a"  // Includes minutes
-        return formatter.string(from: date).lowercased()  // "4:00pm"
+        formatter.timeZone = nyTimeZone
+        formatter.dateFormat = "h:00a"
+        return formatter.string(from: date).lowercased() // "4:00pm"
     }
     
     private func formatShortDateWithDay(_ date: Date) -> String {
         let formatter = DateFormatter()
+        formatter.timeZone = nyTimeZone
         formatter.dateFormat = "EEE, MMM d"
         return formatter.string(from: date)
     }

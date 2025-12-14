@@ -13,6 +13,7 @@ struct HeaderView: View {
     private static let timeFormatter: DateFormatter = {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(identifier: "America/New_York")
         f.dateFormat = "dd/MM HH:mm"
         return f
     }()

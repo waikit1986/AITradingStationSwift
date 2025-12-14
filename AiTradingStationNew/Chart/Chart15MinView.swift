@@ -16,6 +16,7 @@ struct Chart15MinView: View {
     private static let timeFormatter: DateFormatter = {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(identifier: "America/New_York")
         f.dateFormat = "HH:mm"
         return f
     }()
@@ -144,6 +145,14 @@ struct Chart15MinView: View {
                             }
                         }
                     }
+                }
+                
+                HStack {
+                    Spacer()
+                    Text("time in nyt")
+                        .font(.caption)
+                        .fontWeight(.thin)
+                    Spacer()
                 }
             }
         }
