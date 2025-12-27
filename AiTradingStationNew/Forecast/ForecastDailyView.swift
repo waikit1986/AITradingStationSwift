@@ -8,21 +8,20 @@
 import SwiftUI
 
 struct ForecastDailyView: View {
-    let fcVM: ForecastVM
-    let homeVM: HomeVM
+    let vm: ViewModel
     
     var body: some View {
         ScrollView(showsIndicators: false) {
-            ChartDailyView(fcVM: fcVM)
+            ChartDailyView(vm: vm)
 
-            ForecastDetailView(fcVM: fcVM, homeVM: homeVM)
+            ForecastDetailView(vm: vm)
                 .onAppear {
-                    fcVM.forecastSession = "morning"
+                    vm.forecastSession = "morning"
                 }
         }
     }
 }
 
 #Preview {
-    ForecastDailyView(fcVM: ForecastVM(), homeVM: HomeVM())
+    ForecastDailyView(vm: ViewModel())
 }

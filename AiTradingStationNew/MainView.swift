@@ -10,8 +10,7 @@ import RevenueCat
 import RevenueCatUI
 
 struct MainView: View {
-    @State private var homeVM = HomeVM()
-    @State private var fcVM = ForecastVM()
+    @State private var vm = ViewModel()
     @State private var reviewVM = ReviewVM()
     
     init() {
@@ -21,7 +20,7 @@ struct MainView: View {
     
     var body: some View {
         VStack {
-            ForecastView(fcVM: fcVM, homeVM: homeVM)
+            ForecastView(vm: vm)
         }
         .fontDesign(.rounded)
         .preferredColorScheme(.dark)
@@ -30,13 +29,13 @@ struct MainView: View {
             
             if let customerInfo = try? await Purchases.shared.customerInfo() {
                 let entitlementActive = customerInfo.entitlements[Constants.ENTITLEMENT_ID]?.isActive == true
-                homeVM.hasPremiumAccess = entitlementActive
+                vm.hasPremiumAccess = entitlementActive
             }
             
             for await customerInfo in Purchases.shared.customerInfoStream {
                 let entitlementActive = customerInfo.entitlements[Constants.ENTITLEMENT_ID]?.isActive == true
                 await MainActor.run {
-                    homeVM.hasPremiumAccess = entitlementActive
+                    vm.hasPremiumAccess = entitlementActive
                 }
             }
         }

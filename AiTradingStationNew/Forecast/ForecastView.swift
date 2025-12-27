@@ -8,24 +8,23 @@
 import SwiftUI
 
 struct ForecastView: View {
-    let fcVM: ForecastVM
-    let homeVM: HomeVM
+    let vm: ViewModel
     
     var body: some View {
         ZStack {
             VStack {
-                HeaderView(fcVM: fcVM)
+                HeaderView(vm: vm)
                     .padding()
                 
                 TabView {
-                    ForecastDailyView(fcVM: fcVM, homeVM: homeVM)
+                    ForecastDailyView(vm: vm)
                         .padding()
                         .tabItem {
                             Text("Daily\n Forecast")
                         }
                         .tag(0)
                     
-                    ForecastHourlyView(fcVM: fcVM, homeVM: homeVM)
+                    ForecastHourlyView(vm: vm)
                         .padding()
                         .tabItem {
                             Text("Hourly\n Forecast")
@@ -48,16 +47,16 @@ struct ForecastView: View {
                         .foregroundStyle(.blue)
                         .onTapGesture {
                             Task {
-                                await fcVM.fetchLatestHeaderPrice()
-                                await fcVM.fetchDailyChart()
-                                await fcVM.fetch15minChart()
+                                await vm.fetchLatestHeaderPrice()
+                                await vm.fetchDailyChart()
+                                await vm.fetch15minChart()
 //                                if fcVM.forecastSession == "hourly" {
 //                                    await fcVM.fetch15minChart()
 //                                } else {
 //                                    await fcVM.fetchDailyChart()
 //                                }
                                 
-                                await fcVM.fetchForecast()
+                                await vm.fetchForecast()
                             }
                         }
                 }
@@ -68,7 +67,7 @@ struct ForecastView: View {
 }
 
 #Preview {
-    ForecastView(fcVM: ForecastVM(), homeVM: HomeVM())
+    ForecastView(vm: ViewModel())
         .preferredColorScheme(.dark)
 }
 

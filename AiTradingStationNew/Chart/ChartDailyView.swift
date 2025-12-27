@@ -1,5 +1,5 @@
 //
-//  ChartHourlyView.swift
+//  ChartDailyView.swift
 //  AiTradingStationNew
 //
 //  Created by Low Wai Kit on 11/30/25.
@@ -9,7 +9,7 @@ import SwiftUI
 import Charts
 
 struct ChartDailyView: View {
-    let fcVM: ForecastVM
+    let vm: ViewModel
 
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -24,14 +24,14 @@ struct ChartDailyView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            if fcVM.isLoadingChart {
+            if vm.isLoadingChart {
                 ProgressView("Loading Chart...")
                     .foregroundColor(.white)
-            } else if let error = fcVM.errorMessageChart {
+            } else if let error = vm.errorMessageChart {
                 Text("Error: \(error)")
                     .foregroundColor(.purple)
                     .padding()
-            } else if !fcVM.chartDailyData.isEmpty {
+            } else if !vm.chartDailyData.isEmpty {
                 HStack {
                     Spacer()
                     Text("daily chart")
@@ -45,9 +45,9 @@ struct ChartDailyView: View {
                             // Chart
                             Chart {
                                 // Area under line
-                                ForEach(fcVM.chartDailyData) { point in
+                                ForEach(Array(vm.chartDailyData.enumerated()), id: \.element.id) { index, point in
                                     AreaMark(
-                                        x: .value("Time", point.timestamp),
+                                        x: .value("Time", index),
                                         yStart: .value("Baseline", yAxisDomain().lowerBound),
                                         yEnd: .value("Close", point.close)
                                     )
@@ -66,9 +66,9 @@ struct ChartDailyView: View {
                                 }
 
                                 // Main line
-                                ForEach(fcVM.chartDailyData) { point in
+                                ForEach(Array(vm.chartDailyData.enumerated()), id: \.element.id) { index, point in
                                     LineMark(
-                                        x: .value("Time", point.timestamp),
+                                        x: .value("Time", index),
                                         y: .value("Close", point.close)
                                     )
                                     .interpolationMethod(.catmullRom)
@@ -82,16 +82,23 @@ struct ChartDailyView: View {
                                     )
                                 }
                                 
-                                if let lastClose = fcVM.chartDailyData.last?.close {
+                                if let lastClose = vm.chartDailyData.last?.close {
                                     RuleMark(y: .value("Last Price", lastClose))
                                         .foregroundStyle(.red)
                                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [4]))
                                 }
 
+                                // Vertical dash lines from points to x-axis
+                                ForEach(Array(vm.chartDailyData.enumerated()), id: \.element.id) { index, point in
+                                    RuleMark(x: .value("Time", index))
+                                        .foregroundStyle(Color.white.opacity(0.2))
+                                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                                }
+
                                 // Points with annotation
-                                ForEach(fcVM.chartDailyData) { point in
+                                ForEach(Array(vm.chartDailyData.enumerated()), id: \.element.id) { index, point in
                                     PointMark(
-                                        x: .value("Time", point.timestamp),
+                                        x: .value("Time", index),
                                         y: .value("Close", point.close)
                                     )
                                     .foregroundStyle(Color.white)
@@ -104,21 +111,21 @@ struct ChartDailyView: View {
                                     }
                                 }
                             }
-                            .frame(width: CGFloat(fcVM.chartDailyData.count) * pointSpacing + 50, height: visibleHeight)
+                            .frame(width: CGFloat(vm.chartDailyData.count) * pointSpacing, height: visibleHeight)
                             .chartYScale(domain: yAxisDomain())
+                            .chartXScale(domain: -0.5...Double(vm.chartDailyData.count - 1) + 0.5)
                             .chartYAxis(.hidden)
                             .chartXAxis(.hidden)
                             
                             // Custom timestamp labels below
                             HStack(spacing: 0) {
-                                ForEach(fcVM.chartDailyData) { point in
+                                ForEach(Array(vm.chartDailyData.enumerated()), id: \.element.id) { index, point in
                                     Text(Self.dateFormatter.string(from: point.timestamp))
                                         .font(.caption2)
                                         .foregroundColor(.white.opacity(0.7))
                                         .frame(width: pointSpacing, alignment: .center)
                                 }
                             }
-                            .offset(x: 25)
                         }
                         .id("chart-end")
                     }
@@ -135,22 +142,20 @@ struct ChartDailyView: View {
             }
         }
         .padding(.vertical)
-        .task(id: fcVM.symbol) {
-            fcVM.forecastSession = "morning"
-//            await fcVM.fetchDailyChart()
-//            await fcVM.fetch15minChart()
+        .task(id: vm.symbol) {
+            vm.forecastSession = "morning"
         }
     }
 
     private func yAxisDomain() -> ClosedRange<Double> {
-        guard !fcVM.chartDailyData.isEmpty else { return 0...1 }
-        let minY = fcVM.chartDailyData.map { $0.close }.min() ?? 0
-        let maxY = fcVM.chartDailyData.map { $0.close }.max() ?? 1
+        guard !vm.chartDailyData.isEmpty else { return 0...1 }
+        let minY = vm.chartDailyData.map { $0.close }.min() ?? 0
+        let maxY = vm.chartDailyData.map { $0.close }.max() ?? 1
         let padding = (maxY - minY) * 0.1
         return (minY - padding)...(maxY + padding)
     }
 }
 
 #Preview {
-    ChartDailyView(fcVM: ForecastVM())
+    ChartDailyView(vm: ViewModel())
 }

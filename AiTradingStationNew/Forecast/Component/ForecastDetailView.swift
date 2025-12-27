@@ -9,8 +9,7 @@ import SwiftUI
 import RevenueCatUI
 
 struct ForecastDetailView: View {
-    let fcVM: ForecastVM
-    let homeVM: HomeVM
+    let vm: ViewModel
     
     @State private var isShowingPaywall = false
     
@@ -18,7 +17,7 @@ struct ForecastDetailView: View {
     
     var body: some View {
         ScrollView {
-            if fcVM.isLoadingForecast {
+            if vm.isLoadingForecast {
                 VStack {
                     ProgressView()
                     Text("Fetching forecast…")
@@ -26,12 +25,12 @@ struct ForecastDetailView: View {
                         .padding(.top, 8)
                 }
                 .padding(.top, 40)
-            } else if let f = fcVM.forecast {
+            } else if let f = vm.forecast {
                 VStack(spacing: 24) {
                     // ------- Trading Signals -------
                     VStack {
                         VStack(alignment: .leading, spacing: 16) {
-                            if fcVM.forecastSession == "hourly" {
+                            if vm.forecastSession == "hourly" {
                                 VStack {
                                     Text("Hourly forecast: \(formatHour(f.timestamp))")
                                         .font(.title2)
@@ -251,20 +250,20 @@ struct ForecastDetailView: View {
                         .padding(.top, 12)
                     
                 }
-            } else if let error = fcVM.errorMessageForecast {
+            } else if let error = vm.errorMessageForecast {
                 Text("Error: Forecast:\n\(error)")
                     .foregroundColor(.purple)
                     .padding()
             }
         }
-        .navigationTitle(fcVM.forecast?.symbol ?? "Forecast")
+        .navigationTitle(vm.forecast?.symbol ?? "Forecast")
         .navigationBarTitleDisplayMode(.inline)
-        .task(id: fcVM.symbol) {
-            await fcVM.fetchForecast()
+        .task(id: vm.symbol) {
+            await vm.fetchForecast()
         }
-        .blur(radius: homeVM.hasPremiumAccess ? 0 : 10)
+        .blur(radius: vm.hasPremiumAccess ? 0 : 10)
         .overlay {
-            if !homeVM.hasPremiumAccess {
+            if !vm.hasPremiumAccess {
                 VStack {
                     Image(systemName: "lock.fill")
                         .font(.largeTitle)
@@ -293,7 +292,7 @@ struct ForecastDetailView: View {
         .sheet(isPresented: self.$isShowingPaywall) {
             PaywallView()
         }
-        .onChange(of: homeVM.hasPremiumAccess) { oldValue, newValue in
+        .onChange(of: vm.hasPremiumAccess) { oldValue, newValue in
             if newValue {
                 isShowingPaywall = false
             }
@@ -326,6 +325,6 @@ struct ForecastDetailView: View {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        ForecastDetailView(fcVM: ForecastVM(), homeVM: HomeVM())
+        ForecastDetailView(vm: ViewModel())
     }
 }

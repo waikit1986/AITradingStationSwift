@@ -10,20 +10,30 @@ import Observation
 
 @MainActor
 @Observable
-final class ForecastVM {
-    var isLoadingChart: Bool = false
-    var isLoadingForecast: Bool = false
-    var errorMessageHeader: String?
-    var errorMessageChart: String?
-    var errorMessageForecast: String?
+final class ViewModel {
+    var selection: Int = 0
+    var isShowingAiTerms: Bool {
+        get { UserDefaults.standard.bool(forKey: "isShowingAiTerms") }
+        set { UserDefaults.standard.set(newValue, forKey: "isShowingAiTerms") }
+    }
+    var hasPremiumAccess: Bool = false
+    
     var symbol: String? = "spy"
-    var forecastSession: String? = "hourly"
+    
     var headerLatestPrice: [MsDataApi] = []
+    var errorMessageHeader: String?
+    
+    var isLoadingChart: Bool = false
     var chart15MinData: [MsDataApi] = []
     var chart1HData: [MsDataApi] = []
     var chartDailyData: [MsDataApi] = []
-    var forecast: FcDb?
+    var errorMessageChart: String?
     
+    var forecastSession: String? = "hourly"
+    var isLoadingForecast: Bool = false
+    var forecast: FcDb?
+    var errorMessageForecast: String?
+   
     let symbolList = [
         // 🟦 Core tradable ETFs
         "SPY", "QQQ", "DIA", "IWM",

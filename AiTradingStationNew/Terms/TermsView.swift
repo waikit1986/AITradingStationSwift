@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TermsView: View {
-    let homeVM: HomeVM
+    let vm: ViewModel
     
     var body: some View {
         ScrollView {
@@ -30,9 +30,9 @@ struct TermsView: View {
                     }
                 }
                 
-                if homeVM.isShowingAiTerms == true {
+                if vm.isShowingAiTerms == true {
                     Button(action: {
-                        homeVM.isShowingAiTerms = false
+                        vm.isShowingAiTerms = false
                     }) {
                         Text("I Understand")
                             .frame(maxWidth: .infinity)
@@ -50,5 +50,5 @@ struct TermsView: View {
 }
 
 #Preview {
-    TermsView(homeVM: HomeVM())
+    TermsView(vm: ViewModel())
 }

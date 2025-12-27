@@ -8,21 +8,20 @@
 import SwiftUI
 
 struct ForecastHourlyView: View {
-    let fcVM: ForecastVM
-    let homeVM: HomeVM
+    let vm: ViewModel
     
     var body: some View {
         ScrollView(showsIndicators: false) {
-            Chart15MinView(fcVM: fcVM)
+            Chart15MinView(vm: vm)
 
-            ForecastDetailView(fcVM: fcVM, homeVM: homeVM)
+            ForecastDetailView(vm: vm)
                 .onAppear {
-                    fcVM.forecastSession = "hourly"
+                    vm.forecastSession = "hourly"
                 }
         }
     }
 }
 
 #Preview {
-    ForecastHourlyView(fcVM: ForecastVM(), homeVM: HomeVM())
+    ForecastHourlyView(vm: ViewModel())
 }

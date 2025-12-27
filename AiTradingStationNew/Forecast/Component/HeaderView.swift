@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HeaderView: View {
-    let fcVM: ForecastVM
+    let vm: ViewModel
     
     private static let timeFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -21,16 +21,16 @@ struct HeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Menu {
-                ForEach(fcVM.symbolList, id: \.self) { sym in
+                ForEach(vm.symbolList, id: \.self) { sym in
                     Button(sym) {
                         Task {
-                            fcVM.symbol = sym
+                            vm.symbol = sym
                         }
                     }
                 }
             } label: {
                 HStack(spacing: 6) {
-                    Text((fcVM.forecastSession == "hourly" ? fcVM.headerLatestPrice.last?.symbol : fcVM.chartDailyData.last?.symbol) ?? "--")
+                    Text((vm.forecastSession == "hourly" ? vm.headerLatestPrice.last?.symbol : vm.chartDailyData.last?.symbol) ?? "--")
                     .font(.title)
                     .fontWeight(.bold)
 
@@ -43,74 +43,37 @@ struct HeaderView: View {
             }
             
             VStack {
-                Text(fcVM.headerLatestPrice.last?.symbol_name ?? "--")
+                Text(vm.headerLatestPrice.last?.symbol_name ?? "--")
                     .font(.title3)
                     .fontWeight(.thin)
                     .padding(.bottom)
             }
             .frame(maxWidth: .infinity, alignment: .center)
             
-            Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.marketstack_last ?? 0))
+            Text(String(format: "%.2f", vm.headerLatestPrice.last?.marketstack_last ?? 0))
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            
-//            HStack(spacing: 20) {
-//                VStack(alignment: .leading) {
-//                    Text("Prev Open")
-//                        .font(.caption2)
-//                        .foregroundStyle(Color.gray)
-//                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.open ?? 0))
-//                        .font(.caption)
-//                        .foregroundStyle(Color.white)
-//                }
-//                
-//                VStack(alignment: .leading) {
-//                    Text("Prev High")
-//                        .font(.caption2)
-//                        .foregroundStyle(Color.gray)
-//                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.high ?? 0))
-//                        .font(.caption)
-//                        .foregroundStyle(Color.green)
-//                }
-//                
-//                VStack(alignment: .leading) {
-//                    Text("Prev Low")
-//                        .font(.caption2)
-//                        .foregroundStyle(Color.gray)
-//                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.low ?? 0))
-//                        .font(.caption)
-//                        .foregroundStyle(Color.red)
-//                }
-//                
-//                VStack(alignment: .leading) {
-//                    Text("Prev Close")
-//                        .font(.caption2)
-//                        .foregroundStyle(Color.gray)
-//                    Text(String(format: "%.2f", fcVM.headerLatestPrice.last?.low ?? 0))
-//                        .font(.caption)
-//                        .foregroundStyle(Color.blue)
-//                }
-//            }
 
-            Text("last updated derived data: \(fcVM.headerLatestPrice.last?.timestamp != nil ? Self.timeFormatter.string(from: fcVM.headerLatestPrice.last!.timestamp) : "--")")
+            Text("last updated derived data: \(vm.headerLatestPrice.last?.timestamp != nil ? Self.timeFormatter.string(from: vm.headerLatestPrice.last!.timestamp) : "--")")
                 .font(.caption2)
                 .fontWeight(.thin)
         }
         .onAppear {
             Task {
-                await fcVM.fetchLatestHeaderPrice()
-                await fcVM.fetchDailyChart()
-                await fcVM.fetch15minChart()
+                await vm.fetchLatestHeaderPrice()
+                await vm.fetchDailyChart()
+                await vm.fetch15minChart()
+                print(vm.headerLatestPrice.last?.marketstack_last as Any)
             }
         }
-        .task(id: fcVM.symbol) {
-            await fcVM.fetchLatestHeaderPrice()
-            await fcVM.fetchDailyChart()
-            await fcVM.fetch15minChart()
+        .task(id: vm.symbol) {
+            await vm.fetchLatestHeaderPrice()
+            await vm.fetchDailyChart()
+            await vm.fetch15minChart()
         }
     }
 }
 
 #Preview {
-    HeaderView(fcVM: ForecastVM())
+    HeaderView(vm: ViewModel())
 }
