@@ -20,7 +20,7 @@ struct MainView: View {
     
     var body: some View {
         VStack {
-            ForecastView(vm: vm)
+            ForecastView(vm: vm, reviewVM: reviewVM)
         }
         .fontDesign(.rounded)
         .preferredColorScheme(.dark)

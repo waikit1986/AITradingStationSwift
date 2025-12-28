@@ -21,6 +21,7 @@ final class ViewModel {
     var symbol: String? = "spy"
     
     var headerLatestPrice: [MsDataApi] = []
+    var isLoadingHeader: Bool = false
     var errorMessageHeader: String?
     
     var isLoadingChart: Bool = false
@@ -50,6 +51,9 @@ final class ViewModel {
     
     func fetchLatestHeaderPrice() async {
         errorMessageHeader = nil
+        isLoadingHeader = true
+        defer { isLoadingHeader = false }
+        
         do {
             var components = URLComponents(
                 url: baseURL.appendingPathComponent("/api/ms/15min"),

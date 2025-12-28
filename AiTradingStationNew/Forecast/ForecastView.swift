@@ -9,65 +9,38 @@ import SwiftUI
 
 struct ForecastView: View {
     let vm: ViewModel
+    let reviewVM: ReviewVM
     
     var body: some View {
-        ZStack {
-            VStack {
-                HeaderView(vm: vm)
-                    .padding()
-                
-                TabView {
+        VStack {
+            TabView {
+                VStack {
+                    HeaderView(vm: vm)
                     ForecastDailyView(vm: vm)
-                        .padding()
-                        .tabItem {
-                            Text("Daily\n Forecast")
-                        }
-                        .tag(0)
-                    
-                    ForecastHourlyView(vm: vm)
-                        .padding()
-                        .tabItem {
-                            Text("Hourly\n Forecast")
-                        }
-                        .tag(1)
                 }
-            }
-            
-            VStack {
-                Spacer()
+                .padding()
+                .tabItem { Text("Daily") }
+                .tag(0)
                 
-                HStack {
-                    Spacer()
-                    
-                    Image(systemName: "arrow.clockwise")
-                        .padding()
-                        .padding(.top)
-                        .padding(.horizontal)
-                        .font(.title)
-                        .foregroundStyle(.blue)
-                        .onTapGesture {
-                            Task {
-                                await vm.fetchLatestHeaderPrice()
-                                await vm.fetchDailyChart()
-                                await vm.fetch15minChart()
-//                                if fcVM.forecastSession == "hourly" {
-//                                    await fcVM.fetch15minChart()
-//                                } else {
-//                                    await fcVM.fetchDailyChart()
-//                                }
-                                
-                                await vm.fetchForecast()
-                            }
-                        }
+                VStack {
+                    HeaderView(vm: vm)
+                    ForecastHourlyView(vm: vm)
                 }
+                .padding()
+                .tabItem { Text("Hourly") }
+                .tag(1)
+                
+                SettingsView(vm: vm, reviewVM: reviewVM)
+                    .padding()
+                    .tabItem { Text("Settings") }
+                    .tag(2)
             }
-
         }
     }
 }
 
 #Preview {
-    ForecastView(vm: ViewModel())
+    ForecastView(vm: ViewModel(), reviewVM: ReviewVM())
         .preferredColorScheme(.dark)
 }
 
